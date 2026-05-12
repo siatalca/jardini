@@ -58,7 +58,6 @@ const scannerState = {
   status: null,
   rafId: 0,
   html5Qrcode: null,
-  html5QrcodeScanner: null,
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -686,23 +685,6 @@ async function openHtml5QrcodeModal() {
   const readerHostId = `scanner-fallback-${Date.now()}`;
   scannerState.fallbackHost.innerHTML = `<div id="${readerHostId}" class="scanner-fallback-reader"></div>`;
 
-  if (isIosDevice()) {
-    await startHtml5QrcodeScannerUi(readerHostId);
-    return;
-  }
-
-  try {
-    await startHtml5QrcodeLowLevel(readerHostId);
-  } catch (error) {
-    console.warn('Fallback de escaner activado por compatibilidad:', error);
-    if (!scannerState.active) {
-      return;
-    }
-    await startHtml5QrcodeScannerUi(readerHostId);
-  }
-}
-
-async function startHtml5QrcodeLowLevel(readerHostId) {
   const scannerFormats = getHtml5QrcodeFormats();
   const scannerConfig = {
     useBarCodeDetectorIfSupported: false,
@@ -715,125 +697,22 @@ async function startHtml5QrcodeLowLevel(readerHostId) {
   const html5Qrcode = new window.Html5Qrcode(readerHostId, scannerConfig);
   scannerState.html5Qrcode = html5Qrcode;
 
-  const cameraSelection = await getPreferredHtml5CameraSelection();
-
-  await withPromiseTimeout(
-    html5Qrcode.start(
-      cameraSelection,
-      {
-        fps: 10,
-        qrbox: { width: 280, height: 140 },
-        aspectRatio: 1.3333,
-      },
-      (decodedText) => {
-        onScannerCodeDetected(decodedText);
-      },
-      () => {
-        // Ignorar errores de lectura parciales mientras sigue escaneando.
-      }
-    ),
-    10000,
-    'TIMEOUT_INICIANDO_CAMARA'
-  );
-
-  setScannerStatus('Apunta al codigo de barras o QR.');
-}
-
-async function startHtml5QrcodeScannerUi(readerHostId) {
-  if (typeof window.Html5QrcodeScanner !== 'function') {
-    throw new Error('Html5QrcodeScanner no disponible');
-  }
-
-  const scannerFormats = getHtml5QrcodeFormats();
-  const scannerConfig = {
-    fps: 10,
-    qrbox: { width: 280, height: 140 },
-    rememberLastUsedCamera: true,
-    showTorchButtonIfSupported: true,
-  };
-
-  if (scannerFormats.length > 0) {
-    scannerConfig.formatsToSupport = scannerFormats;
-  }
-
-  if (window.Html5QrcodeScanType && Number.isInteger(window.Html5QrcodeScanType.SCAN_TYPE_CAMERA)) {
-    scannerConfig.supportedScanTypes = [window.Html5QrcodeScanType.SCAN_TYPE_CAMERA];
-  }
-
-  const scannerUi = new window.Html5QrcodeScanner(readerHostId, scannerConfig, false);
-  scannerState.html5QrcodeScanner = scannerUi;
-
-  scannerUi.render(
+  await html5Qrcode.start(
+    { facingMode: { ideal: 'environment' } },
+    {
+      fps: 10,
+      qrbox: { width: 280, height: 140 },
+      aspectRatio: 1.3333,
+    },
     (decodedText) => {
       onScannerCodeDetected(decodedText);
     },
     () => {
-      // Ignorar errores parciales mientras sigue escaneando.
+      // Ignorar errores de lectura parciales mientras sigue escaneando.
     }
   );
 
-  setScannerStatus('Modo compatible iPhone: toca "Request Camera Permissions" y luego "Start Scanning".');
-}
-
-function isIosDevice() {
-  const ua = String(navigator.userAgent || '');
-  const isIpadOs = ua.includes('Mac') && typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 1;
-  return /iPad|iPhone|iPod/.test(ua) || isIpadOs;
-}
-
-async function getPreferredHtml5CameraSelection() {
-  if (typeof window.Html5Qrcode?.getCameras !== 'function') {
-    return { facingMode: { ideal: 'environment' } };
-  }
-
-  try {
-    const cameras = await withPromiseTimeout(window.Html5Qrcode.getCameras(), 7000, 'TIMEOUT_CAMERAS');
-    const preferredCameraId = pickPreferredCameraId(cameras);
-    if (preferredCameraId) {
-      return preferredCameraId;
-    }
-  } catch (error) {
-    console.warn('No se pudo listar camaras, usando facingMode.', error);
-  }
-
-  return { facingMode: { ideal: 'environment' } };
-}
-
-function pickPreferredCameraId(cameras) {
-  if (!Array.isArray(cameras) || cameras.length === 0) {
-    return '';
-  }
-
-  const backCameraRegex = /back|rear|environment|trasera|posterior/i;
-  const preferred =
-    cameras.find((camera) => backCameraRegex.test(String(camera && camera.label ? camera.label : ''))) ||
-    cameras[cameras.length - 1];
-
-  if (!preferred || !preferred.id) {
-    return '';
-  }
-
-  return String(preferred.id);
-}
-
-function withPromiseTimeout(promise, timeoutMs, timeoutCode) {
-  return new Promise((resolve, reject) => {
-    const timeoutId = window.setTimeout(() => {
-      const timeoutError = new Error(timeoutCode || 'TIMEOUT');
-      timeoutError.name = 'TimeoutError';
-      reject(timeoutError);
-    }, timeoutMs);
-
-    Promise.resolve(promise)
-      .then((value) => {
-        window.clearTimeout(timeoutId);
-        resolve(value);
-      })
-      .catch((error) => {
-        window.clearTimeout(timeoutId);
-        reject(error);
-      });
-  });
+  setScannerStatus('Apunta al codigo de barras o QR.');
 }
 
 function onScannerCodeDetected(rawCodeValue) {
@@ -919,9 +798,7 @@ function setScannerStatus(message) {
 
 function stopScannerSession() {
   const html5Qrcode = scannerState.html5Qrcode;
-  const html5QrcodeScanner = scannerState.html5QrcodeScanner;
   scannerState.html5Qrcode = null;
-  scannerState.html5QrcodeScanner = null;
 
   if (html5Qrcode && typeof html5Qrcode.stop === 'function') {
     html5Qrcode
@@ -938,12 +815,6 @@ function stopScannerSession() {
           }
         }
       });
-  }
-
-  if (html5QrcodeScanner && typeof html5QrcodeScanner.clear === 'function') {
-    html5QrcodeScanner.clear().catch(() => {
-      // Ignorar errores de limpieza al cerrar UI fallback.
-    });
   }
 
   scannerState.active = false;
