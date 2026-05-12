@@ -95,7 +95,7 @@ if (BASE_PATH) {
   });
 } else {
   app.get('/venta', (_req, res) => {
-    res.redirect(301, '/venta/');
+    sendIndexPage(res);
   });
 
   app.get('/venta/', (_req, res) => {
@@ -1345,4 +1345,5 @@ async function seedPlantsIfEmpty() {
 
   console.log('Se cargaron 10 plantas de ejemplo.');
 }
+
 
