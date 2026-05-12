@@ -19,6 +19,10 @@ const INDEX_TEMPLATE_PATH = path.join(PUBLIC_DIR, 'index.html');
 const STORE_TEMPLATE_PATH = path.join(PUBLIC_DIR, 'store.html');
 const CARE_TEMPLATE_PATH = path.join(PUBLIC_DIR, 'care.html');
 const DEFAULT_PLANT_IMAGE_PATH = 'img/logo/ICONO 2.png';
+const PLANT_NAME_IMAGE_MAP = new Map([
+  ['aloe vera', 'img/plants/aloe-vera.jpg'],
+  ['cactus echinopsis', 'img/plants/cactus-echinopsis.png'],
+]);
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/jpg', 'image/webp']);
 const TRUST_PROXY_ENV = String(process.env.TRUST_PROXY || '').trim().toLowerCase();
@@ -129,7 +133,7 @@ app.get(`${BASE_PATH}/api/plants`, async (req, res) => {
        ORDER BY id DESC`
     );
     const data = rows.map((row) => {
-      const imagePath = normalizeImagePath(row.image_path);
+      const imagePath = resolvePlantImagePath(row.image_path, row.name);
       return {
         ...row,
         image_path: imagePath,
@@ -347,7 +351,7 @@ app.get(`${BASE_PATH}/api/sales/:id`, async (req, res) => {
 
     const items = itemRows.map((item) => {
       const snapshot = safeParseSnapshot(item.plant_snapshot);
-      const imagePath = normalizeImagePath(snapshot.image_path);
+      const imagePath = resolvePlantImagePath(snapshot.image_path, snapshot.name);
       snapshot.image_path = imagePath;
       snapshot.image_url = buildAssetUrl(req, imagePath);
       return {
@@ -429,7 +433,7 @@ app.post(`${BASE_PATH}/api/sales`, async (req, res) => {
       const plantId = Number(plant.id);
       const unitPrice = Number(plant.price);
       const token = await generateCareToken(connection);
-      const plantImagePath = normalizeImagePath(plant.image_path);
+      const plantImagePath = resolvePlantImagePath(plant.image_path, plant.name);
 
       const snapshot = {
         plant_id: plant.id,
@@ -524,7 +528,7 @@ app.get(`${BASE_PATH}/api/care/:token`, async (req, res) => {
 
     const item = rows[0];
     const snapshot = safeParseSnapshot(item.plant_snapshot);
-    const imagePath = normalizeImagePath(snapshot.image_path);
+    const imagePath = resolvePlantImagePath(snapshot.image_path, snapshot.name);
     snapshot.image_path = imagePath;
     snapshot.image_url = buildAssetUrl(req, imagePath);
 
@@ -745,6 +749,29 @@ function normalizeImagePath(value) {
   }
 
   return pathValue;
+}
+
+function normalizePlantNameKey(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ');
+}
+
+function resolvePlantImagePath(imagePath, plantName) {
+  const normalizedPath = normalizeImagePath(imagePath);
+  if (normalizedPath !== DEFAULT_PLANT_IMAGE_PATH) {
+    return normalizedPath;
+  }
+
+  const namedImagePath = PLANT_NAME_IMAGE_MAP.get(normalizePlantNameKey(plantName));
+  if (namedImagePath) {
+    return namedImagePath;
+  }
+
+  return normalizedPath;
 }
 
 function isUploadedImagePath(value) {
@@ -1294,7 +1321,7 @@ async function seedPlantsIfEmpty() {
         code,
         plant.name,
         plant.description,
-        DEFAULT_PLANT_IMAGE_PATH,
+        resolvePlantImagePath(plant.image_path, plant.name),
         plant.price,
         plant.light_type,
         plant.watering,

@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jardini | Plantas para tu espacio</title>
-    <link rel="stylesheet" href="__BASE_PATH__/store.css?v=1" />
+    <link rel="stylesheet" href="__BASE_PATH__/store.css?v=2" />
   </head>
   <body>
     <script>
@@ -22,99 +22,118 @@
             <h1>Jardini</h1>
           </div>
         </div>
-        <a class="admin-link" href="__BASE_PATH__/" target="_blank" rel="noreferrer">Panel venta</a>
+        <a class="admin-link" href="__BASE_PATH__/venta/" target="_blank" rel="noreferrer">Panel venta</a>
       </div>
 
       <div class="hero-content">
         <div>
-          <p class="headline">Encuentra tu planta ideal y pídela directo desde la web.</p>
+          <p class="headline">Encuentra tu planta ideal y pidela directo desde la web.</p>
           <p class="subline">
-            Catálogo vivo, búsqueda rápida por código y ficha completa de cuidados para que compres con confianza.
+            Catalogo vivo, busqueda rapida por codigo y ficha de cuidados para comprar con confianza.
           </p>
         </div>
       </div>
     </header>
 
+    <nav class="store-menu" aria-label="Menu clientes">
+      <button type="button" class="menu-btn is-active" data-view-target="catalog">
+        <span>Catalogo</span>
+      </button>
+      <button type="button" class="menu-btn" data-view-target="care">
+        <span>Cuidados</span>
+      </button>
+      <button type="button" class="menu-btn" data-view-target="cart">
+        <span>Carrito</span>
+        <span class="menu-badge" id="cart-count-badge">0</span>
+      </button>
+    </nav>
+
     <main class="store-shell">
-      <section class="card search-card" id="catalogo">
-        <div class="section-head">
-          <h2>Catálogo de plantas</h2>
-          <p>Busca por nombre, código o tipo de luz.</p>
-        </div>
-        <div class="search-row">
-          <input
-            id="plant-search-input"
-            type="search"
-            placeholder="Ej: MONS-001, monstera, luz indirecta..."
-            autocomplete="off"
-          />
-          <button id="clear-search-btn" type="button" class="btn btn-soft">Limpiar</button>
-        </div>
-        <div id="catalog-grid" class="catalog-grid"></div>
+      <section id="view-catalog" class="store-view is-active">
+        <section class="card search-card" id="catalogo">
+          <div class="section-head">
+            <h2>Catalogo de plantas</h2>
+            <p>Busca por nombre, codigo o tipo de luz.</p>
+          </div>
+          <div class="search-row">
+            <input
+              id="plant-search-input"
+              type="search"
+              placeholder="Ej: MONS-001, monstera, luz indirecta..."
+              autocomplete="off"
+            />
+            <button id="clear-search-btn" type="button" class="btn btn-soft">Limpiar</button>
+          </div>
+          <div id="catalog-grid" class="catalog-grid"></div>
+        </section>
       </section>
 
-      <section class="card care-card hidden" id="care-panel">
-        <div class="section-head">
-          <h2>Guía de cuidados</h2>
-          <p id="care-subtitle">Información de la planta seleccionada.</p>
-        </div>
-        <div id="care-content"></div>
+      <section id="view-care" class="store-view">
+        <section class="card lookup-card" id="cuidados">
+          <div class="section-head">
+            <h2>Ya compraste?</h2>
+            <p>Si tienes tu enlace o codigo de cuidado, abrelo aqui.</p>
+          </div>
+          <div class="lookup-row">
+            <input
+              id="care-token-input"
+              type="text"
+              placeholder="Pega el enlace completo o el codigo del cuidado"
+              autocomplete="off"
+            />
+            <button id="open-care-btn" type="button" class="btn btn-primary">Ver cuidados</button>
+          </div>
+        </section>
+
+        <section class="card care-card hidden" id="care-panel">
+          <div class="section-head">
+            <h2>Guia de cuidados</h2>
+            <p id="care-subtitle">Informacion de la planta seleccionada.</p>
+          </div>
+          <div id="care-content"></div>
+        </section>
       </section>
 
-      <section class="card lookup-card" id="cuidados">
-        <div class="section-head">
-          <h2>¿Ya compraste?</h2>
-          <p>Si tienes tu enlace/código de cuidado, ábrelo aquí.</p>
-        </div>
-        <div class="lookup-row">
-          <input
-            id="care-token-input"
-            type="text"
-            placeholder="Pega el enlace completo o el código del cuidado"
-            autocomplete="off"
-          />
-          <button id="open-care-btn" type="button" class="btn btn-primary">Ver cuidados</button>
-        </div>
-      </section>
+      <section id="view-cart" class="store-view">
+        <section class="card order-card" id="pedido">
+          <div class="section-head">
+            <h2>Pedido directo</h2>
+            <p>Agrega plantas al carrito y envia tu solicitud de compra.</p>
+          </div>
 
-      <section class="card order-card" id="pedido">
-        <div class="section-head">
-          <h2>Pedido directo</h2>
-          <p>Agrega plantas al carrito y envía tu solicitud de compra.</p>
-        </div>
+          <div id="cart-items" class="cart-items"></div>
+          <div class="cart-total">
+            <span>Total estimado</span>
+            <strong id="cart-total-amount">$0</strong>
+          </div>
 
-        <div id="cart-items" class="cart-items"></div>
-        <div class="cart-total">
-          <span>Total estimado</span>
-          <strong id="cart-total-amount">$0</strong>
-        </div>
+          <form id="checkout-form" class="checkout-form">
+            <label>
+              Nombre
+              <input id="customer-name" type="text" required />
+            </label>
+            <label>
+              Telefono o WhatsApp
+              <input id="customer-phone" type="text" required />
+            </label>
+            <label>
+              Email (opcional)
+              <input id="customer-email" type="email" />
+            </label>
+            <label>
+              Nota para el pedido (opcional)
+              <textarea id="order-notes" rows="2" placeholder="Ej: Quiero retiro manana en la tarde"></textarea>
+            </label>
+            <button class="btn btn-primary btn-block" type="submit">Enviar pedido</button>
+          </form>
 
-        <form id="checkout-form" class="checkout-form">
-          <label>
-            Nombre
-            <input id="customer-name" type="text" required />
-          </label>
-          <label>
-            Teléfono o WhatsApp
-            <input id="customer-phone" type="text" required />
-          </label>
-          <label>
-            Email (opcional)
-            <input id="customer-email" type="email" />
-          </label>
-          <label>
-            Nota para el pedido (opcional)
-            <textarea id="order-notes" rows="2" placeholder="Ej: Quiero retiro mañana en la tarde"></textarea>
-          </label>
-          <button class="btn btn-primary btn-block" type="submit">Enviar pedido</button>
-        </form>
-
-        <div id="order-result" class="order-result hidden"></div>
+          <div id="order-result" class="order-result hidden"></div>
+        </section>
       </section>
     </main>
 
     <div id="store-toast" class="store-toast hidden"></div>
 
-    <script src="__BASE_PATH__/store.js?v=1"></script>
+    <script src="__BASE_PATH__/store.js?v=2"></script>
   </body>
 </html>

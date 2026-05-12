@@ -1,8 +1,9 @@
-const state = {
+﻿const state = {
   plants: [],
   filteredPlants: [],
   selectedPlantId: 0,
   cart: [],
+  activeView: 'catalog',
 };
 
 const BASE_PATH = detectBasePath();
@@ -26,9 +27,18 @@ const customerEmailInput = document.getElementById('customer-email');
 const orderNotesInput = document.getElementById('order-notes');
 const orderResult = document.getElementById('order-result');
 const toast = document.getElementById('store-toast');
+const menuButtons = Array.from(document.querySelectorAll('[data-view-target]'));
+const cartCountBadge = document.getElementById('cart-count-badge');
+
+const viewByKey = {
+  catalog: document.getElementById('view-catalog'),
+  care: document.getElementById('view-care'),
+  cart: document.getElementById('view-cart'),
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   bindEvents();
+  setActiveView('catalog');
   renderCart();
   loadPlants();
 });
@@ -52,6 +62,12 @@ function bindEvents() {
     }
     event.preventDefault();
     onOpenCareClick();
+  });
+
+  menuButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      setActiveView(button.dataset.viewTarget || 'catalog');
+    });
   });
 
   catalogGrid.addEventListener('click', (event) => {
@@ -104,6 +120,24 @@ function bindEvents() {
   checkoutForm.addEventListener('submit', onCheckoutSubmit);
 }
 
+function setActiveView(viewKey) {
+  const safeKey = viewByKey[viewKey] ? viewKey : 'catalog';
+  state.activeView = safeKey;
+
+  Object.entries(viewByKey).forEach(([key, node]) => {
+    if (!node) {
+      return;
+    }
+    node.classList.toggle('is-active', key === safeKey);
+  });
+
+  menuButtons.forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.viewTarget === safeKey);
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 async function loadPlants() {
   try {
     const result = await fetchJson(`${API_BASE}/plants`);
@@ -117,7 +151,7 @@ async function loadPlants() {
 
     applyCatalogFilter();
   } catch (error) {
-    renderCatalogError(error.message || 'No se pudo cargar el catálogo.');
+    renderCatalogError(error.message || 'No se pudo cargar el catalogo.');
   }
 }
 
@@ -149,7 +183,7 @@ function applyCatalogFilter() {
 
 function renderCatalog() {
   if (state.filteredPlants.length === 0) {
-    catalogGrid.innerHTML = '<p class="cart-empty">No encontramos plantas para esa búsqueda.</p>';
+    catalogGrid.innerHTML = '<p class="cart-empty">No encontramos plantas para esa busqueda.</p>';
     return;
   }
 
@@ -174,7 +208,7 @@ function renderPlantCard(plant) {
         </div>
         <div class="plant-chip-row">
           <span class="chip">${escapeHtml(plant.light_type || 'Luz no especificada')}</span>
-          <span class="chip">${escapeHtml(plant.location || 'Ubicación no especificada')}</span>
+          <span class="chip">${escapeHtml(plant.location || 'Ubicacion no especificada')}</span>
         </div>
         <div class="plant-actions">
           <button type="button" class="btn btn-soft" data-action="care" data-id="${plant.id}">Ver cuidados</button>
@@ -195,20 +229,20 @@ function showPlantCare(plantId) {
   careSubtitle.textContent = `${plant.name || 'Planta'} (${plant.code || 'SIN-CODIGO'})`;
 
   const details = [
-    ['Descripción', plant.description || 'Sin descripción'],
+    ['Descripcion', plant.description || 'Sin descripcion'],
     ['Tipo de luz', plant.light_type || 'No especificado'],
     ['Riego', plant.watering || 'No especificado'],
     ['Interior / Exterior', plant.location || 'No especificado'],
     ['Temperatura ideal', plant.temperature_range || 'No especificado'],
     ['Humedad ideal', plant.humidity || 'No especificado'],
     ['Sustrato', plant.substrate || 'No especificado'],
-    ['Fertilización', plant.fertilization || 'No especificado'],
+    ['Fertilizacion', plant.fertilization || 'No especificado'],
     ['Poda', plant.pruning || 'No especificado'],
     ['Plagas frecuentes', plant.pests || 'No especificado'],
     ['Toxicidad', plant.toxicity || 'No especificado'],
-    ['Apta para mascotas', Number(plant.pet_friendly) === 1 ? 'Sí' : 'No'],
-    ['Planta venenosa', Number(plant.poisonous) === 1 ? 'Sí' : 'No'],
-    ['Cuidado específico', plant.specific_care || 'Sin cuidado específico'],
+    ['Apta para mascotas', Number(plant.pet_friendly) === 1 ? 'Si' : 'No'],
+    ['Planta venenosa', Number(plant.poisonous) === 1 ? 'Si' : 'No'],
+    ['Cuidado especifico', plant.specific_care || 'Sin cuidado especifico'],
     ['Factores adicionales', plant.extra_factors || 'Sin factores adicionales'],
   ];
 
@@ -231,6 +265,7 @@ function showPlantCare(plantId) {
   `;
 
   carePanel.classList.remove('hidden');
+  setActiveView('care');
   carePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -278,8 +313,10 @@ function removeFromCart(plantId) {
 }
 
 function renderCart() {
+  renderCartBadge();
+
   if (state.cart.length === 0) {
-    cartItems.innerHTML = '<p class="cart-empty">Aún no agregas plantas al pedido.</p>';
+    cartItems.innerHTML = '<p class="cart-empty">Aun no agregas plantas al pedido.</p>';
     cartTotalAmount.textContent = formatMoney(0);
     return;
   }
@@ -311,10 +348,16 @@ function renderCart() {
   cartTotalAmount.textContent = formatMoney(total);
 }
 
+function renderCartBadge() {
+  const units = state.cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  cartCountBadge.textContent = String(units);
+  cartCountBadge.style.display = units > 0 ? 'inline-flex' : 'none';
+}
+
 function onOpenCareClick() {
   const rawInput = String(careTokenInput.value || '').trim();
   if (!rawInput) {
-    showToast('Ingresa tu enlace o código de cuidado.', true);
+    showToast('Ingresa tu enlace o codigo de cuidado.', true);
     careTokenInput.focus();
     return;
   }
@@ -345,7 +388,7 @@ function onOpenCareClick() {
     return;
   }
 
-  showToast('No encontramos ese código o enlace. Revisa e intenta nuevamente.', true);
+  showToast('No encontramos ese codigo o enlace. Revisa e intenta nuevamente.', true);
 }
 
 function extractCareToken(value) {
@@ -370,7 +413,7 @@ async function onCheckoutSubmit(event) {
   event.preventDefault();
 
   if (state.cart.length === 0) {
-    showToast('Tu carrito está vacío. Agrega al menos una planta.', true);
+    showToast('Tu carrito esta vacio. Agrega al menos una planta.', true);
     return;
   }
 
@@ -386,7 +429,7 @@ async function onCheckoutSubmit(event) {
   }
 
   if (!customerPhone || customerPhone.length < 6) {
-    showToast('Ingresa un teléfono o WhatsApp válido.', true);
+    showToast('Ingresa un telefono o WhatsApp valido.', true);
     customerPhoneInput.focus();
     return;
   }
@@ -395,7 +438,7 @@ async function onCheckoutSubmit(event) {
     customer_name: customerName,
     customer_phone: customerPhone,
     customer_email: customerEmail || null,
-    notes: `[WEB_PEDIDO] ${extraNotes || 'Pedido enviado desde vitrina pública.'}`,
+    notes: `[WEB_PEDIDO] ${extraNotes || 'Pedido enviado desde vitrina publica.'}`,
     items: state.cart.map((item) => ({
       plant_id: Number(item.plant_id),
       code: String(item.code || ''),
@@ -413,7 +456,8 @@ async function onCheckoutSubmit(event) {
     checkoutForm.reset();
     state.cart = [];
     renderCart();
-    showToast('Pedido enviado con éxito.');
+    setActiveView('cart');
+    showToast('Pedido enviado con exito.');
   } catch (error) {
     showToast(error.message || 'No se pudo enviar el pedido.', true);
   }
