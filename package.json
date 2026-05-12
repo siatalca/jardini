@@ -1,0 +1,23 @@
+﻿{
+  "name": "jardini-ventas-plantas",
+  "version": "1.0.0",
+  "description": "Sistema de venta de plantas con modulo de cuidados por URL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "node",
+    "mysql",
+    "plantas",
+    "ventas"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.3"
+  }
+}

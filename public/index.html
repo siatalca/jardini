@@ -1,0 +1,277 @@
+﻿<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jardini | Ventas de Plantas</title>
+    <link rel="stylesheet" href="__BASE_PATH__/styles.css?v=9" />
+  </head>
+  <body>
+    <script>
+      window.__JARDINI_BASE_PATH__ = '__BASE_PATH__';
+    </script>
+    <div class="texture"></div>
+    <header class="app-header">
+      <div>
+        <p class="badge">Vivero</p>
+        <h1>Jardini</h1>
+        <p class="subtitle">Sistema de ventas y cuidados de plantas</p>
+      </div>
+      <div class="brand-icon-badge">
+        <img class="brand-icon" src="__BASE_PATH__/img/logo/ICONO%20BLANCO.png" alt="Logo Jardini" />
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <nav class="tabs">
+        <button class="tab active" data-section="dashboard">Resumen</button>
+        <button class="tab" data-section="plants">Plantas</button>
+        <button class="tab" data-section="sales">Ventas</button>
+      </nav>
+
+      <section class="panel active" id="section-dashboard">
+        <h2>Resumen general</h2>
+        <div class="stats-grid">
+          <article class="stat-card">
+            <h3>Total plantas</h3>
+            <strong id="stat-plants">0</strong>
+          </article>
+          <article class="stat-card">
+            <h3>Total ventas</h3>
+            <strong id="stat-sales">0</strong>
+          </article>
+          <article class="stat-card">
+            <h3>Ingresos</h3>
+            <strong id="stat-income">$0</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="section-plants">
+        <div class="section-head">
+          <h2>Ingreso de plantas</h2>
+          <p>Registra y administra inventario con todos los cuidados.</p>
+        </div>
+
+        <form id="plant-form" class="card form-grid">
+          <input type="hidden" id="plant-id" />
+          <label>
+            Codigo
+            <input type="text" id="code" required pattern="[A-Za-z0-9_-]+" placeholder="Ej: MONS-001" />
+          </label>
+          <label>
+            Nombre
+            <input type="text" id="name" required />
+          </label>
+          <label>
+            Precio
+            <input type="number" id="price" min="1" step="1" required />
+          </label>
+          <label class="full">
+            Descripcion
+            <textarea id="description" rows="2"></textarea>
+          </label>
+          <label class="full">
+            Imagen de la planta (opcional)
+            <input type="file" id="plant_image" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
+          </label>
+          <div class="full image-preview-wrap">
+            <img id="plant-image-preview" src="__BASE_PATH__/img/logo/ICONO%202.png" alt="Vista previa planta" />
+            <label class="check">
+              <input type="checkbox" id="reset_image" />
+              Usar logo predeterminado
+            </label>
+          </div>
+
+          <label>
+            Tipo de luz
+            <input type="text" id="light_type" placeholder="Ej: indirecta brillante" required />
+          </label>
+          <label>
+            Riego
+            <input type="text" id="watering" placeholder="Ej: cada 7 dias" required />
+          </label>
+          <label>
+            Interior / Exterior
+            <select id="location" required>
+              <option value="Interior">Interior</option>
+              <option value="Exterior">Exterior</option>
+              <option value="Ambos">Ambos</option>
+            </select>
+          </label>
+
+          <label>
+            Toxicidad
+            <input type="text" id="toxicity" placeholder="Ej: toxica para mascotas" />
+          </label>
+          <label>
+            Temperatura ideal
+            <input type="text" id="temperature_range" placeholder="Ej: 18-27 C" />
+          </label>
+          <label>
+            Humedad
+            <input type="text" id="humidity" placeholder="Ej: media-alta" />
+          </label>
+
+          <label>
+            Sustrato
+            <input type="text" id="substrate" placeholder="Ej: drenante" />
+          </label>
+          <label>
+            Fertilizacion
+            <input type="text" id="fertilization" placeholder="Ej: cada 30 dias" />
+          </label>
+          <label>
+            Poda
+            <input type="text" id="pruning" placeholder="Ej: retirar hojas secas" />
+          </label>
+
+          <label class="full">
+            Plagas frecuentes
+            <textarea id="pests" rows="2" placeholder="Ej: cochinilla, araña roja"></textarea>
+          </label>
+          <label class="full">
+            Cuidado especifico
+            <textarea id="specific_care" rows="2"></textarea>
+          </label>
+          <label class="full">
+            Otros factores importantes
+            <textarea id="extra_factors" rows="2" placeholder="Clima, corrientes de aire, etc."></textarea>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" id="pet_friendly" />
+            Apta para mascotas
+          </label>
+          <label class="check">
+            <input type="checkbox" id="poisonous" />
+            Planta venenosa
+          </label>
+
+          <div class="actions full">
+            <button type="submit" class="btn btn-primary" id="save-plant-btn">Guardar planta</button>
+            <button type="button" class="btn btn-soft hidden" id="cancel-edit-btn">Cancelar edicion</button>
+          </div>
+        </form>
+
+        <article class="card table-wrap">
+          <h3>Inventario</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Foto</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Luz</th>
+                  <th>Riego</th>
+                  <th>Ubicacion</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="plants-tbody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" id="section-sales">
+        <div class="section-head">
+          <h2>Modulo de ventas</h2>
+          <p>Registra ventas y genera links publicos de cuidado para cada planta.</p>
+        </div>
+
+        <form id="sale-form" class="card form-grid">
+          <div class="full sales-top-actions">
+            <button type="button" class="btn btn-soft" id="toggle-customer-btn">+ Agregar cliente (opcional)</button>
+          </div>
+
+          <div class="full form-grid customer-fields hidden" id="customer-fields">
+            <label>
+              Cliente
+              <input type="text" id="customer_name" />
+            </label>
+            <label>
+              Email
+              <input type="email" id="customer_email" />
+            </label>
+            <label>
+              Telefono
+              <input type="text" id="customer_phone" />
+            </label>
+          </div>
+
+          <div class="full">
+            <div class="line-header">
+              <h3>Agregar planta por codigo</h3>
+            </div>
+            <div class="sale-code-entry">
+              <label>
+                Codigo de planta
+                <input type="text" id="sale_plant_code" placeholder="Ej: MONS-001" autocomplete="off" />
+              </label>
+              <label>
+                Cantidad
+                <input type="number" id="sale_qty" min="1" step="1" value="1" />
+              </label>
+              <button type="button" class="btn btn-soft hidden" id="scan-code-btn">Escanear codigo</button>
+              <button type="button" class="btn btn-primary" id="add-by-code-btn">Agregar al carrito</button>
+            </div>
+          </div>
+
+          <label class="full">
+            Nota de venta
+            <textarea id="sale_notes" rows="2"></textarea>
+          </label>
+
+          <div class="full">
+            <div class="line-header">
+              <h3>Carrito</h3>
+            </div>
+            <div id="sale-items" class="sale-items"></div>
+          </div>
+
+          <div class="actions full">
+            <button type="submit" class="btn btn-primary">Registrar venta</button>
+          </div>
+        </form>
+
+        <article class="card hidden" id="sale-result-card">
+          <h3>Venta registrada</h3>
+          <p id="sale-result-summary"></p>
+          <ul id="care-links"></ul>
+        </article>
+
+        <article class="card table-wrap">
+          <h3>Historial de ventas</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Total</th>
+                  <th>Fecha</th>
+                  <th>Items</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="sales-tbody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card hidden" id="sale-detail-card">
+          <h3>Detalle de venta</h3>
+          <div id="sale-detail-content"></div>
+        </article>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="__BASE_PATH__/app.js?v=15"></script>
+  </body>
+</html>
