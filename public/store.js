@@ -151,7 +151,7 @@ async function loadPlants() {
 
     applyCatalogFilter();
   } catch (error) {
-    renderCatalogError(error.message || 'No se pudo cargar el catalogo.');
+    renderCatalogError(error.message || 'No se pudo cargar el catálogo.');
   }
 }
 
@@ -183,7 +183,7 @@ function applyCatalogFilter() {
 
 function renderCatalog() {
   if (state.filteredPlants.length === 0) {
-    catalogGrid.innerHTML = '<p class="cart-empty">No encontramos plantas para esa busqueda.</p>';
+    catalogGrid.innerHTML = '<p class="cart-empty">No encontramos plantas para esa búsqueda.</p>';
     return;
   }
 
@@ -208,7 +208,7 @@ function renderPlantCard(plant) {
         </div>
         <div class="plant-chip-row">
           <span class="chip">${escapeHtml(plant.light_type || 'Luz no especificada')}</span>
-          <span class="chip">${escapeHtml(plant.location || 'Ubicacion no especificada')}</span>
+          <span class="chip">${escapeHtml(plant.location || 'Ubicación no especificada')}</span>
         </div>
         <div class="plant-actions">
           <button type="button" class="btn btn-soft" data-action="care" data-id="${plant.id}">Ver cuidados</button>
@@ -229,20 +229,20 @@ function showPlantCare(plantId) {
   careSubtitle.textContent = `${plant.name || 'Planta'} (${plant.code || 'SIN-CODIGO'})`;
 
   const details = [
-    ['Descripcion', plant.description || 'Sin descripcion'],
+    ['Descripción', plant.description || 'Sin descripción'],
     ['Tipo de luz', plant.light_type || 'No especificado'],
     ['Riego', plant.watering || 'No especificado'],
     ['Interior / Exterior', plant.location || 'No especificado'],
     ['Temperatura ideal', plant.temperature_range || 'No especificado'],
     ['Humedad ideal', plant.humidity || 'No especificado'],
     ['Sustrato', plant.substrate || 'No especificado'],
-    ['Fertilizacion', plant.fertilization || 'No especificado'],
+    ['Fertilización', plant.fertilization || 'No especificado'],
     ['Poda', plant.pruning || 'No especificado'],
     ['Plagas frecuentes', plant.pests || 'No especificado'],
     ['Toxicidad', plant.toxicity || 'No especificado'],
-    ['Apta para mascotas', Number(plant.pet_friendly) === 1 ? 'Si' : 'No'],
-    ['Planta venenosa', Number(plant.poisonous) === 1 ? 'Si' : 'No'],
-    ['Cuidado especifico', plant.specific_care || 'Sin cuidado especifico'],
+    ['Apta para mascotas', Number(plant.pet_friendly) === 1 ? 'Sí' : 'No'],
+    ['Planta venenosa', Number(plant.poisonous) === 1 ? 'Sí' : 'No'],
+    ['Cuidado específico', plant.specific_care || 'Sin cuidado específico'],
     ['Factores adicionales', plant.extra_factors || 'Sin factores adicionales'],
   ];
 
@@ -316,7 +316,7 @@ function renderCart() {
   renderCartBadge();
 
   if (state.cart.length === 0) {
-    cartItems.innerHTML = '<p class="cart-empty">Aun no agregas plantas al pedido.</p>';
+    cartItems.innerHTML = '<p class="cart-empty">Aún no agregas plantas al pedido.</p>';
     cartTotalAmount.textContent = formatMoney(0);
     return;
   }
@@ -357,7 +357,7 @@ function renderCartBadge() {
 function onOpenCareClick() {
   const rawInput = String(careTokenInput.value || '').trim();
   if (!rawInput) {
-    showToast('Ingresa tu enlace o codigo de cuidado.', true);
+    showToast('Ingresa tu enlace o código de cuidado.', true);
     careTokenInput.focus();
     return;
   }
@@ -388,7 +388,7 @@ function onOpenCareClick() {
     return;
   }
 
-  showToast('No encontramos ese codigo o enlace. Revisa e intenta nuevamente.', true);
+  showToast('No encontramos ese código o enlace. Revisa e intenta nuevamente.', true);
 }
 
 function extractCareToken(value) {
@@ -413,7 +413,7 @@ async function onCheckoutSubmit(event) {
   event.preventDefault();
 
   if (state.cart.length === 0) {
-    showToast('Tu carrito esta vacio. Agrega al menos una planta.', true);
+    showToast('Tu carrito está vacío. Agrega al menos una planta.', true);
     return;
   }
 
@@ -429,7 +429,7 @@ async function onCheckoutSubmit(event) {
   }
 
   if (!customerPhone || customerPhone.length < 6) {
-    showToast('Ingresa un telefono o WhatsApp valido.', true);
+    showToast('Ingresa un teléfono o WhatsApp válido.', true);
     customerPhoneInput.focus();
     return;
   }
@@ -438,7 +438,7 @@ async function onCheckoutSubmit(event) {
     customer_name: customerName,
     customer_phone: customerPhone,
     customer_email: customerEmail || null,
-    notes: `[WEB_PEDIDO] ${extraNotes || 'Pedido enviado desde vitrina publica.'}`,
+    notes: `[WEB_PEDIDO] ${extraNotes || 'Pedido enviado desde vitrina pública.'}`,
     items: state.cart.map((item) => ({
       plant_id: Number(item.plant_id),
       code: String(item.code || ''),
@@ -457,7 +457,7 @@ async function onCheckoutSubmit(event) {
     state.cart = [];
     renderCart();
     setActiveView('cart');
-    showToast('Pedido enviado con exito.');
+    showToast('Pedido enviado con éxito.');
   } catch (error) {
     showToast(error.message || 'No se pudo enviar el pedido.', true);
   }

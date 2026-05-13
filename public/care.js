@@ -13,7 +13,7 @@ init();
 
 async function init() {
   if (!token) {
-    renderError('Token de cuidado invalido.');
+    renderError('Token de cuidado inválido.');
     return;
   }
 
@@ -33,20 +33,20 @@ function renderCare(data) {
   careImage.src = plant.image_url || DEFAULT_IMAGE_URL;
 
   const blocks = [
-    ['Codigo', plant.code || 'No especificado'],
-    ['Descripcion', plant.description || 'Sin descripcion'],
+    ['Código', plant.code || 'No especificado'],
+    ['Descripción', plant.description || 'Sin descripción'],
     ['Tipo de luz', plant.light_type || 'No especificado'],
     ['Riego', plant.watering || 'No especificado'],
-    ['Ubicacion', plant.location || 'No especificado'],
+    ['Ubicación', plant.location || 'No especificado'],
     ['Temperatura ideal', plant.temperature_range || 'No especificado'],
     ['Humedad ideal', plant.humidity || 'No especificado'],
     ['Sustrato', plant.substrate || 'No especificado'],
-    ['Fertilizacion', plant.fertilization || 'No especificado'],
+    ['Fertilización', plant.fertilization || 'No especificado'],
     ['Poda', plant.pruning || 'No especificado'],
     ['Plagas frecuentes', plant.pests || 'No especificado'],
     ['Toxicidad', plant.toxicity || 'No especificado'],
-    ['Apta para mascotas', plant.pet_friendly ? 'Si' : 'No'],
-    ['Planta venenosa', plant.poisonous ? 'Si' : 'No'],
+    ['Apta para mascotas', plant.pet_friendly ? 'Sí' : 'No'],
+    ['Planta venenosa', plant.poisonous ? 'Sí' : 'No'],
   ];
 
   careGrid.innerHTML = blocks
@@ -61,8 +61,8 @@ function renderCare(data) {
     .join('');
 
   careNotes.innerHTML = `
-    <h3>Cuidado especifico</h3>
-    <p>${escapeHtml(plant.specific_care || 'Sin cuidado especifico registrado.')}</p>
+    <h3>Cuidado específico</h3>
+    <p>${escapeHtml(plant.specific_care || 'Sin cuidado específico registrado.')}</p>
     <h3>Factores adicionales</h3>
     <p>${escapeHtml(plant.extra_factors || 'Sin factores extra registrados.')}</p>
     <p><strong>Cantidad comprada:</strong> ${Number(data.quantity || 1)}</p>
@@ -70,7 +70,7 @@ function renderCare(data) {
 }
 
 function renderError(message) {
-  titleEl.textContent = 'No se pudo cargar la guia';
+  titleEl.textContent = 'No se pudo cargar la guía';
   subtitleEl.textContent = message;
   careImage.src = DEFAULT_IMAGE_URL;
   careGrid.innerHTML = '';
@@ -82,7 +82,7 @@ async function fetchJson(url) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.message || 'Error al cargar la guia de cuidado.');
+    throw new Error(data.message || 'Error al cargar la guía de cuidado.');
   }
 
   return data;

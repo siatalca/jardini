@@ -56,7 +56,7 @@
         <form id="plant-form" class="card form-grid">
           <input type="hidden" id="plant-id" />
           <label>
-            Codigo
+            Código
             <input type="text" id="code" required pattern="[A-Za-z0-9_-]+" placeholder="Ej: MONS-001" />
           </label>
           <label>
@@ -68,7 +68,7 @@
             <input type="number" id="price" min="1" step="1" required />
           </label>
           <label class="full">
-            Descripcion
+            Descripción
             <textarea id="description" rows="2"></textarea>
           </label>
           <label class="full">
@@ -89,7 +89,7 @@
           </label>
           <label>
             Riego
-            <input type="text" id="watering" placeholder="Ej: cada 7 dias" required />
+            <input type="text" id="watering" placeholder="Ej: cada 7 días" required />
           </label>
           <label>
             Interior / Exterior
@@ -102,7 +102,7 @@
 
           <label>
             Toxicidad
-            <input type="text" id="toxicity" placeholder="Ej: toxica para mascotas" />
+            <input type="text" id="toxicity" placeholder="Ej: tóxica para mascotas" />
           </label>
           <label>
             Temperatura ideal
@@ -118,8 +118,8 @@
             <input type="text" id="substrate" placeholder="Ej: drenante" />
           </label>
           <label>
-            Fertilizacion
-            <input type="text" id="fertilization" placeholder="Ej: cada 30 dias" />
+            Fertilización
+            <input type="text" id="fertilization" placeholder="Ej: cada 30 días" />
           </label>
           <label>
             Poda
@@ -131,7 +131,7 @@
             <textarea id="pests" rows="2" placeholder="Ej: cochinilla, araña roja"></textarea>
           </label>
           <label class="full">
-            Cuidado especifico
+            Cuidado específico
             <textarea id="specific_care" rows="2"></textarea>
           </label>
           <label class="full">
@@ -150,7 +150,7 @@
 
           <div class="actions full">
             <button type="submit" class="btn btn-primary" id="save-plant-btn">Guardar planta</button>
-            <button type="button" class="btn btn-soft hidden" id="cancel-edit-btn">Cancelar edicion</button>
+            <button type="button" class="btn btn-soft hidden" id="cancel-edit-btn">Cancelar edición</button>
           </div>
         </form>
 
@@ -160,13 +160,13 @@
             <table>
               <thead>
                 <tr>
-                  <th>Codigo</th>
+                  <th>Código</th>
                   <th>Foto</th>
                   <th>Nombre</th>
                   <th>Precio</th>
                   <th>Luz</th>
                   <th>Riego</th>
-                  <th>Ubicacion</th>
+                  <th>Ubicación</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -178,8 +178,8 @@
 
       <section class="panel" id="section-sales">
         <div class="section-head">
-          <h2>Modulo de ventas</h2>
-          <p>Registra ventas y genera links publicos de cuidado para cada planta.</p>
+          <h2>Módulo de ventas</h2>
+          <p>Registra ventas y genera links públicos de cuidado para cada planta.</p>
         </div>
 
         <form id="sale-form" class="card form-grid">
@@ -197,25 +197,25 @@
               <input type="email" id="customer_email" />
             </label>
             <label>
-              Telefono
+              Teléfono
               <input type="text" id="customer_phone" />
             </label>
           </div>
 
           <div class="full">
             <div class="line-header">
-              <h3>Agregar planta por codigo</h3>
+              <h3>Agregar planta por código</h3>
             </div>
             <div class="sale-code-entry">
               <label>
-                Codigo de planta
+                Código de planta
                 <input type="text" id="sale_plant_code" placeholder="Ej: MONS-001" autocomplete="off" />
               </label>
               <label>
                 Cantidad
                 <input type="number" id="sale_qty" min="1" step="1" value="1" />
               </label>
-              <button type="button" class="btn btn-soft hidden" id="scan-code-btn">Escanear codigo</button>
+              <button type="button" class="btn btn-soft hidden" id="scan-code-btn">Escanear código</button>
               <button type="button" class="btn btn-primary" id="add-by-code-btn">Agregar al carrito</button>
             </div>
           </div>
@@ -272,6 +272,6 @@
     <div id="toast" class="toast hidden"></div>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="__BASE_PATH__/app.js?v=14"></script>
+    <script src="__BASE_PATH__/app.js?v=15"></script>
   </body>
 </html>

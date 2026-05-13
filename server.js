@@ -21,7 +21,15 @@ const CARE_TEMPLATE_PATH = path.join(PUBLIC_DIR, 'care.html');
 const DEFAULT_PLANT_IMAGE_PATH = 'img/logo/ICONO 2.png';
 const PLANT_NAME_IMAGE_MAP = new Map([
   ['aloe vera', 'img/plants/aloe-vera.jpg'],
+  ['calathea orbifolia', 'img/plants/calathea-orbifolia.png'],
   ['cactus echinopsis', 'img/plants/cactus-echinopsis.png'],
+  ['ficus lyrata', 'img/plants/ficus-lyrata.png'],
+  ['helecho boston', 'img/plants/helecho-boston.png'],
+  ['lavanda', 'img/plants/lavanda.png'],
+  ['monstera deliciosa', 'img/plants/monstera-deliciosa.png'],
+  ['pothos neon', 'img/plants/pothos-neon.png'],
+  ['romero', 'img/plants/romero.png'],
+  ['sansevieria trifasciata', 'img/plants/sansevieria-trifasciata.png'],
 ]);
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/jpg', 'image/webp']);
@@ -188,13 +196,13 @@ app.post(`${BASE_PATH}/api/plants`, upload.single('image'), async (req, res) => 
       ]
     );
 
-    res.status(201).json({ message: 'Planta registrada con exito.', id: result.insertId });
+    res.status(201).json({ message: 'Planta registrada con éxito.', id: result.insertId });
   } catch (error) {
     if (req.file) {
       await deleteUploadedImageIfNeeded(buildUploadedImagePath(req.file.filename));
     }
     if (error && error.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ message: 'El codigo de planta ya existe.' });
+      return res.status(409).json({ message: 'El código de planta ya existe.' });
     }
     handleError(res, error, 'No se pudo guardar la planta.');
   }
@@ -207,7 +215,7 @@ app.put(`${BASE_PATH}/api/plants/:id`, upload.single('image'), async (req, res) 
       if (req.file) {
         await deleteUploadedImageIfNeeded(buildUploadedImagePath(req.file.filename));
       }
-      return res.status(400).json({ message: 'ID de planta invalido.' });
+      return res.status(400).json({ message: 'ID de planta inválido.' });
     }
 
     const [currentRows] = await pool.query('SELECT id, image_path FROM plants WHERE id = ? LIMIT 1', [plantId]);
@@ -275,7 +283,7 @@ app.put(`${BASE_PATH}/api/plants/:id`, upload.single('image'), async (req, res) 
       await deleteUploadedImageIfNeeded(buildUploadedImagePath(req.file.filename));
     }
     if (error && error.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ message: 'El codigo de planta ya existe.' });
+      return res.status(409).json({ message: 'El código de planta ya existe.' });
     }
     handleError(res, error, 'No se pudo actualizar la planta.');
   }
@@ -285,7 +293,7 @@ app.delete(`${BASE_PATH}/api/plants/:id`, async (req, res) => {
   try {
     const plantId = Number(req.params.id);
     if (!Number.isInteger(plantId) || plantId <= 0) {
-      return res.status(400).json({ message: 'ID de planta invalido.' });
+      return res.status(400).json({ message: 'ID de planta inválido.' });
     }
 
     const [plantRows] = await pool.query('SELECT image_path FROM plants WHERE id = ? LIMIT 1', [plantId]);
@@ -333,7 +341,7 @@ app.get(`${BASE_PATH}/api/sales/:id`, async (req, res) => {
   try {
     const saleId = Number(req.params.id);
     if (!Number.isInteger(saleId) || saleId <= 0) {
-      return res.status(400).json({ message: 'ID de venta invalido.' });
+      return res.status(400).json({ message: 'ID de venta inválido.' });
     }
 
     const [saleRows] = await pool.query('SELECT * FROM sales WHERE id = ?', [saleId]);
@@ -419,12 +427,12 @@ app.post(`${BASE_PATH}/api/sales`, async (req, res) => {
       } else if (requestedPlantCode) {
         [plantRows] = await connection.query('SELECT * FROM plants WHERE code = ? LIMIT 1', [requestedPlantCode]);
       } else {
-        throw validationError('Cada item debe tener codigo de planta o ID valido.');
+        throw validationError('Cada ítem debe tener código de planta o ID válido.');
       }
 
       if (plantRows.length === 0) {
         if (requestedPlantCode) {
-          throw validationError(`La planta con codigo ${requestedPlantCode} no existe.`);
+          throw validationError(`La planta con código ${requestedPlantCode} no existe.`);
         }
         throw validationError(`La planta con ID ${requestedPlantId} no existe.`);
       }
@@ -484,7 +492,7 @@ app.post(`${BASE_PATH}/api/sales`, async (req, res) => {
     }));
 
     res.status(201).json({
-      message: 'Venta registrada con exito.',
+      message: 'Venta registrada con éxito.',
       data: {
         sale_id: saleId,
         total,
@@ -508,7 +516,7 @@ app.get(`${BASE_PATH}/api/care/:token`, async (req, res) => {
   try {
     const token = String(req.params.token || '').trim();
     if (token.length < 8) {
-      return res.status(400).json({ message: 'Token invalido.' });
+      return res.status(400).json({ message: 'Token inválido.' });
     }
 
     const [rows] = await pool.query(
@@ -564,14 +572,14 @@ app.get(`${BASE_PATH}/api/stats`, async (req, res) => {
       },
     });
   } catch (error) {
-    handleError(res, error, 'No se pudieron obtener las estadisticas.');
+    handleError(res, error, 'No se pudieron obtener las estadísticas.');
   }
 });
 
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ message: 'La imagen supera el maximo permitido (5MB).' });
+      return res.status(400).json({ message: 'La imagen supera el máximo permitido (5MB).' });
     }
     return res.status(400).json({ message: 'No se pudo procesar la imagen enviada.' });
   }
@@ -669,18 +677,18 @@ function mapPlantPayload(body) {
 
 function validatePlant(payload) {
   if (!payload.code || payload.code.length < 2) {
-    return { valid: false, message: 'El codigo de la planta es obligatorio.' };
+    return { valid: false, message: 'El código de la planta es obligatorio.' };
   }
 
   if (!/^[A-Z0-9_-]+$/.test(payload.code)) {
     return {
       valid: false,
-      message: 'El codigo solo puede contener letras, numeros, guion y guion bajo.',
+      message: 'El código solo puede contener letras, números, guion y guion bajo.',
     };
   }
 
   if (payload.code.length > 50) {
-    return { valid: false, message: 'El codigo no puede superar 50 caracteres.' };
+    return { valid: false, message: 'El código no puede superar 50 caracteres.' };
   }
 
   if (!payload.name || payload.name.length < 2) {
@@ -688,7 +696,7 @@ function validatePlant(payload) {
   }
 
   if (!Number.isFinite(payload.price) || payload.price <= 0) {
-    return { valid: false, message: 'El precio debe ser un numero mayor a 0.' };
+    return { valid: false, message: 'El precio debe ser un número mayor a 0.' };
   }
 
   if (!payload.light_type) {
@@ -700,7 +708,7 @@ function validatePlant(payload) {
   }
 
   if (!['Interior', 'Exterior', 'Ambos'].includes(payload.location)) {
-    return { valid: false, message: 'La ubicacion debe ser Interior, Exterior o Ambos.' };
+    return { valid: false, message: 'La ubicación debe ser Interior, Exterior o Ambos.' };
   }
 
   return { valid: true };
@@ -815,7 +823,7 @@ async function generateCareToken(connection) {
     }
   }
 
-  throw new Error('No se pudo generar un token unico de cuidados.');
+  throw new Error('No se pudo generar un token único de cuidados.');
 }
 
 function buildCareUrl(req, token) {
@@ -911,7 +919,7 @@ async function ensureDatabaseExists() {
 
 function formatServerListenError(error) {
   if (error && error.code === 'EADDRINUSE') {
-    return `No se pudo iniciar: el puerto ${PORT} ya esta en uso. Cierra el otro proceso Node o cambia PORT en .env.`;
+    return `No se pudo iniciar: el puerto ${PORT} ya está en uso. Cierra el otro proceso Node o cambia PORT en .env.`;
   }
 
   if (error && error.message) {
@@ -923,7 +931,7 @@ function formatServerListenError(error) {
 
 function formatStartupError(error) {
   if (error && error.code === 'ER_ACCESS_DENIED_ERROR') {
-    return 'MySQL denego el acceso. Revisa DB_USER y DB_PASSWORD en .env.';
+    return 'MySQL denegó el acceso. Revisa DB_USER y DB_PASSWORD en .env.';
   }
 
   if (error && error.code === 'ER_DBACCESS_DENIED_ERROR') {
@@ -931,7 +939,7 @@ function formatStartupError(error) {
   }
 
   if (error && error.code === 'ECONNREFUSED') {
-    return 'No se pudo conectar a MySQL. Verifica que el servicio este encendido y DB_HOST/DB_PORT sean correctos.';
+    return 'No se pudo conectar a MySQL. Verifica que el servicio esté encendido y DB_HOST/DB_PORT sean correctos.';
   }
 
   return error && error.message ? error.message : 'Error desconocido al iniciar.';
@@ -1116,16 +1124,16 @@ async function seedPlantsIfEmpty() {
       light_type: 'Luz indirecta brillante',
       watering: '1 vez por semana, dejar secar 2-3 cm del sustrato',
       location: 'Interior',
-      toxicity: 'Levemente toxica para mascotas si se ingiere',
+      toxicity: 'Levemente tóxica para mascotas si se ingiere',
       temperature_range: '18-27 C',
       humidity: 'Media a alta (50%-70%)',
-      substrate: 'Suelto, drenante y rico en materia organica',
-      fertilization: 'Cada 30 dias en primavera/verano',
+      substrate: 'Suelto, drenante y rico en materia orgánica',
+      fertilization: 'Cada 30 días en primavera/verano',
       pruning: 'Retirar hojas secas y guiar tutor',
       pests: 'Cochinilla y araña roja',
       pet_friendly: 0,
       poisonous: 1,
-      specific_care: 'Limpiar hojas con paño humedo y evitar sol directo fuerte.',
+      specific_care: 'Limpiar hojas con paño húmedo y evitar sol directo fuerte.',
       extra_factors: 'Sensibilidad al exceso de agua en invierno.',
     },
     {
@@ -1133,13 +1141,13 @@ async function seedPlantsIfEmpty() {
       description: 'Muy resistente, ideal para principiantes y espacios con poca luz.',
       price: 12990,
       light_type: 'Baja a media, tolera luz indirecta',
-      watering: 'Cada 12-15 dias',
+      watering: 'Cada 12-15 días',
       location: 'Interior',
       toxicity: 'Puede causar malestar en mascotas si se mastica',
       temperature_range: '15-30 C',
       humidity: 'Baja a media',
       substrate: 'Para cactus o suculentas con buen drenaje',
-      fertilization: 'Cada 45 dias en temporada calida',
+      fertilization: 'Cada 45 días en temporada cálida',
       pruning: 'Solo retiro de hojas dañadas',
       pests: 'Pulgones ocasionales',
       pet_friendly: 0,
@@ -1149,12 +1157,12 @@ async function seedPlantsIfEmpty() {
     },
     {
       name: 'Pothos Neon',
-      description: 'Enredadera de rapido crecimiento con hojas verde lima.',
+      description: 'Enredadera de rápido crecimiento con hojas verde lima.',
       price: 9990,
       light_type: 'Indirecta media',
-      watering: 'Cada 6-8 dias',
+      watering: 'Cada 6-8 días',
       location: 'Interior',
-      toxicity: 'Toxica para mascotas por oxalatos',
+      toxicity: 'Tóxica para mascotas por oxalatos',
       temperature_range: '18-28 C',
       humidity: 'Media',
       substrate: 'Universal con perlita',
@@ -1168,17 +1176,17 @@ async function seedPlantsIfEmpty() {
     },
     {
       name: 'Lavanda',
-      description: 'Aromatica de exterior con floracion violeta y uso ornamental.',
+      description: 'Aromática de exterior con floración violeta y uso ornamental.',
       price: 7490,
       light_type: 'Sol directo 6+ horas',
       watering: '2 veces por semana, moderado',
       location: 'Exterior',
-      toxicity: 'No toxica en general, evitar consumo excesivo',
+      toxicity: 'No tóxica en general, evitar consumo excesivo',
       temperature_range: '10-30 C',
       humidity: 'Baja',
       substrate: 'Seco y arenoso',
-      fertilization: 'Ligera cada 60 dias',
-      pruning: 'Poda despues de floracion',
+      fertilization: 'Ligera cada 60 días',
+      pruning: 'Poda después de floración',
       pests: 'Hongos por exceso de humedad',
       pet_friendly: 1,
       poisonous: 0,
@@ -1187,35 +1195,35 @@ async function seedPlantsIfEmpty() {
     },
     {
       name: 'Ficus Lyrata',
-      description: 'Planta de interior elegante con hojas grandes tipo violin.',
+      description: 'Planta de interior elegante con hojas grandes tipo violín.',
       price: 32990,
       light_type: 'Luz muy brillante sin sol directo intenso',
-      watering: 'Cada 7-10 dias',
+      watering: 'Cada 7-10 días',
       location: 'Interior',
-      toxicity: 'Toxica para mascotas al ingerir savia',
+      toxicity: 'Tóxica para mascotas al ingerir savia',
       temperature_range: '18-26 C',
       humidity: 'Media alta',
       substrate: 'Rico y con drenaje',
-      fertilization: 'Cada 30 dias en primavera/verano',
+      fertilization: 'Cada 30 días en primavera/verano',
       pruning: 'Poda formativa ligera',
       pests: 'Araña roja, cochinilla',
       pet_friendly: 0,
       poisonous: 1,
       specific_care: 'No mover constantemente de lugar.',
-      extra_factors: 'Sensibilidad a corrientes de aire frio.',
+      extra_factors: 'Sensibilidad a corrientes de aire frío.',
     },
     {
       name: 'Aloe Vera',
       description: 'Suculenta medicinal de bajo mantenimiento.',
       price: 6990,
       light_type: 'Luz abundante o sol suave',
-      watering: 'Cada 15 dias',
+      watering: 'Cada 15 días',
       location: 'Ambos',
-      toxicity: 'Gel util, pero latex puede irritar',
+      toxicity: 'Gel útil, pero látex puede irritar',
       temperature_range: '14-32 C',
       humidity: 'Baja',
       substrate: 'Para cactus',
-      fertilization: 'Cada 60 dias en crecimiento',
+      fertilization: 'Cada 60 días en crecimiento',
       pruning: 'Retirar hojas basales secas',
       pests: 'Cochinilla en hojas',
       pet_friendly: 0,
@@ -1225,35 +1233,35 @@ async function seedPlantsIfEmpty() {
     },
     {
       name: 'Helecho Boston',
-      description: 'Frondoso y decorativo, ideal para ambientes humedos.',
+      description: 'Frondoso y decorativo, ideal para ambientes húmedos.',
       price: 10990,
       light_type: 'Luz indirecta media',
-      watering: 'Mantener sustrato ligeramente humedo',
+      watering: 'Mantener sustrato ligeramente húmedo',
       location: 'Interior',
-      toxicity: 'Generalmente no toxico',
+      toxicity: 'Generalmente no tóxico',
       temperature_range: '16-25 C',
       humidity: 'Alta',
-      substrate: 'Ligero y organico',
-      fertilization: 'Cada 45 dias',
+      substrate: 'Ligero y orgánico',
+      fertilization: 'Cada 45 días',
       pruning: 'Retirar frondas secas',
       pests: 'Araña roja en ambientes secos',
       pet_friendly: 1,
       poisonous: 0,
       specific_care: 'Pulverizar agua en clima seco.',
-      extra_factors: 'Agradece baños de humedad periodicos.',
+      extra_factors: 'Agradece baños de humedad periódicos.',
     },
     {
       name: 'Cactus Echinopsis',
-      description: 'Cactus compacto de facil cuidado y floracion estacional.',
+      description: 'Cactus compacto de fácil cuidado y floración estacional.',
       price: 5990,
       light_type: 'Sol directo o luz muy alta',
-      watering: 'Cada 20 dias (menos en invierno)',
+      watering: 'Cada 20 días (menos en invierno)',
       location: 'Ambos',
-      toxicity: 'No toxico, pero con espinas',
+      toxicity: 'No tóxico, pero con espinas',
       temperature_range: '10-35 C',
       humidity: 'Baja',
       substrate: 'Muy drenante',
-      fertilization: 'Cada 60 dias en temporada calida',
+      fertilization: 'Cada 60 días en temporada cálida',
       pruning: 'No requiere, solo limpieza',
       pests: 'Cochinilla algodonosa',
       pet_friendly: 1,
@@ -1266,32 +1274,32 @@ async function seedPlantsIfEmpty() {
       description: 'Follaje ornamental con patrones plateados.',
       price: 21990,
       light_type: 'Luz indirecta media',
-      watering: 'Cada 5-7 dias con agua baja en cal',
+      watering: 'Cada 5-7 días con agua baja en cal',
       location: 'Interior',
-      toxicity: 'No toxica para mascotas',
+      toxicity: 'No tóxica para mascotas',
       temperature_range: '18-27 C',
       humidity: 'Alta (60%+)',
-      substrate: 'Suelto, humedo y drenante',
-      fertilization: 'Cada 30 dias en crecimiento',
+      substrate: 'Suelto, húmedo y drenante',
+      fertilization: 'Cada 30 días en crecimiento',
       pruning: 'Retirar hojas amarillas',
       pests: 'Trips y araña roja',
       pet_friendly: 1,
       poisonous: 0,
-      specific_care: 'Evitar corrientes frias y sol directo.',
+      specific_care: 'Evitar corrientes frías y sol directo.',
       extra_factors: 'Sensible a agua con cloro.',
     },
     {
       name: 'Romero',
-      description: 'Aromatica culinaria resistente y de facil poda.',
+      description: 'Aromática culinaria resistente y de fácil poda.',
       price: 5490,
       light_type: 'Sol directo 5-8 horas',
       watering: '2 veces por semana en verano, menos en invierno',
       location: 'Exterior',
-      toxicity: 'No toxico en uso normal',
+      toxicity: 'No tóxico en uso normal',
       temperature_range: '8-30 C',
       humidity: 'Baja a media',
       substrate: 'Ligero y bien aireado',
-      fertilization: 'Cada 45 dias',
+      fertilization: 'Cada 45 días',
       pruning: 'Poda frecuente para estimular brotes',
       pests: 'Mildiu en exceso de humedad',
       pet_friendly: 1,
@@ -1345,5 +1353,4 @@ async function seedPlantsIfEmpty() {
 
   console.log('Se cargaron 10 plantas de ejemplo.');
 }
-
 

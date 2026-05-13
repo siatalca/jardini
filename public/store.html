@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jardini | Plantas para tu espacio</title>
-    <link rel="stylesheet" href="__BASE_PATH__/store.css?v=2" />
+    <link rel="stylesheet" href="__BASE_PATH__/store.css?v=3" />
   </head>
   <body>
     <script>
@@ -22,22 +22,22 @@
             <h1>Jardini</h1>
           </div>
         </div>
-        <a class="admin-link" href="__BASE_PATH__/venta/" target="_blank" rel="noreferrer">Panel venta</a>
+        <a class="admin-link" href="__BASE_PATH__/venta/" target="_blank" rel="noreferrer">Panel de ventas</a>
       </div>
 
       <div class="hero-content">
         <div>
-          <p class="headline">Encuentra tu planta ideal y pidela directo desde la web.</p>
+          <p class="headline">Encuentra tu planta ideal y pídela directo desde la web.</p>
           <p class="subline">
-            Catalogo vivo, busqueda rapida por codigo y ficha de cuidados para comprar con confianza.
+            Catálogo vivo, búsqueda rápida por código y ficha de cuidados para comprar con confianza.
           </p>
         </div>
       </div>
     </header>
 
-    <nav class="store-menu" aria-label="Menu clientes">
+    <nav class="store-menu" aria-label="Menú clientes">
       <button type="button" class="menu-btn is-active" data-view-target="catalog">
-        <span>Catalogo</span>
+        <span>Catálogo</span>
       </button>
       <button type="button" class="menu-btn" data-view-target="care">
         <span>Cuidados</span>
@@ -52,8 +52,8 @@
       <section id="view-catalog" class="store-view is-active">
         <section class="card search-card" id="catalogo">
           <div class="section-head">
-            <h2>Catalogo de plantas</h2>
-            <p>Busca por nombre, codigo o tipo de luz.</p>
+            <h2>Catálogo de plantas</h2>
+            <p>Busca por nombre, código o tipo de luz.</p>
           </div>
           <div class="search-row">
             <input
@@ -71,14 +71,14 @@
       <section id="view-care" class="store-view">
         <section class="card lookup-card" id="cuidados">
           <div class="section-head">
-            <h2>Ya compraste?</h2>
-            <p>Si tienes tu enlace o codigo de cuidado, abrelo aqui.</p>
+            <h2>¿Ya compraste?</h2>
+            <p>Si tienes tu enlace o código de cuidado, ábrelo aquí.</p>
           </div>
           <div class="lookup-row">
             <input
               id="care-token-input"
               type="text"
-              placeholder="Pega el enlace completo o el codigo del cuidado"
+              placeholder="Pega el enlace completo o el código del cuidado"
               autocomplete="off"
             />
             <button id="open-care-btn" type="button" class="btn btn-primary">Ver cuidados</button>
@@ -87,8 +87,8 @@
 
         <section class="card care-card hidden" id="care-panel">
           <div class="section-head">
-            <h2>Guia de cuidados</h2>
-            <p id="care-subtitle">Informacion de la planta seleccionada.</p>
+            <h2>Guía de cuidados</h2>
+            <p id="care-subtitle">Información de la planta seleccionada.</p>
           </div>
           <div id="care-content"></div>
         </section>
@@ -98,7 +98,7 @@
         <section class="card order-card" id="pedido">
           <div class="section-head">
             <h2>Pedido directo</h2>
-            <p>Agrega plantas al carrito y envia tu solicitud de compra.</p>
+            <p>Agrega plantas al carrito y envía tu solicitud de compra.</p>
           </div>
 
           <div id="cart-items" class="cart-items"></div>
@@ -113,7 +113,7 @@
               <input id="customer-name" type="text" required />
             </label>
             <label>
-              Telefono o WhatsApp
+              Teléfono o WhatsApp
               <input id="customer-phone" type="text" required />
             </label>
             <label>
@@ -122,7 +122,7 @@
             </label>
             <label>
               Nota para el pedido (opcional)
-              <textarea id="order-notes" rows="2" placeholder="Ej: Quiero retiro manana en la tarde"></textarea>
+              <textarea id="order-notes" rows="2" placeholder="Ej: Quiero retiro mañana en la tarde"></textarea>
             </label>
             <button class="btn btn-primary btn-block" type="submit">Enviar pedido</button>
           </form>
@@ -134,6 +134,6 @@
 
     <div id="store-toast" class="store-toast hidden"></div>
 
-    <script src="__BASE_PATH__/store.js?v=2"></script>
+    <script src="__BASE_PATH__/store.js?v=3"></script>
   </body>
 </html>

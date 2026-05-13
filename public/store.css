@@ -56,7 +56,7 @@ body {
 }
 
 body {
-  padding-bottom: 88px;
+  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
 }
 
 .bg-mesh {
@@ -76,7 +76,6 @@ body {
 }
 
 .hero,
-.store-menu,
 .store-shell {
   position: relative;
   z-index: 1;
@@ -156,7 +155,7 @@ body {
   position: fixed;
   left: 0.8rem;
   right: 0.8rem;
-  bottom: 0.8rem;
+  bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
@@ -166,6 +165,7 @@ body {
   border-radius: 16px;
   padding: 0.45rem;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1200;
 }
 
 .menu-btn {
@@ -486,7 +486,7 @@ textarea:focus {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 88px;
+  bottom: calc(92px + env(safe-area-inset-bottom, 0px));
   padding: 0.65rem 0.85rem;
   border-radius: 10px;
   background: #0a5d3f;

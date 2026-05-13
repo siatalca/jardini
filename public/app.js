@@ -1,4 +1,4 @@
-const state = {
+﻿const state = {
   plants: [],
   sales: [],
   editingPlantId: null,
@@ -277,13 +277,13 @@ function renderPlants() {
     .map(
       (plant) => `
       <tr class="row-data">
-        <td data-label="Codigo">${escapeHtml(plant.code || '-')}</td>
+        <td data-label="Código">${escapeHtml(plant.code || '-')}</td>
         <td data-label="Foto" class="cell-image"><img class="table-plant-image" src="${escapeHtml(plant.image_url || DEFAULT_IMAGE_URL)}" alt="${escapeHtml(plant.name || 'Planta')}" /></td>
         <td data-label="Nombre">${escapeHtml(plant.name)}</td>
         <td data-label="Precio">${formatMoney(plant.price)}</td>
         <td data-label="Luz">${escapeHtml(plant.light_type || '-')}</td>
         <td data-label="Riego">${escapeHtml(plant.watering || '-')}</td>
-        <td data-label="Ubicacion">${escapeHtml(plant.location || '-')}</td>
+        <td data-label="Ubicación">${escapeHtml(plant.location || '-')}</td>
         <td data-label="Acciones" class="cell-actions">
           <div class="actions">
             <button class="btn btn-soft" data-action="edit" data-id="${plant.id}">Editar</button>
@@ -348,7 +348,7 @@ async function onPlantSubmit(event) {
       body: payload,
     });
 
-    showToast(result.message || 'Planta guardada con exito.');
+    showToast(result.message || 'Planta guardada con éxito.');
     resetPlantForm();
     await Promise.all([loadPlants(), loadStats()]);
   } catch (error) {
@@ -430,7 +430,7 @@ function onAddByCodeClick() {
   const quantity = Number(saleQtyInput.value);
 
   if (!codeInput) {
-    showToast('Debes ingresar el codigo de la planta.', true);
+    showToast('Debes ingresar el código de la planta.', true);
     saleCodeInput.focus();
     return;
   }
@@ -443,7 +443,7 @@ function onAddByCodeClick() {
 
   const plant = findPlantByCode(codeInput);
   if (!plant) {
-    showToast(`No existe una planta con codigo ${codeInput}.`, true);
+    showToast(`No existe una planta con código ${codeInput}.`, true);
     saleCodeInput.focus();
     saleCodeInput.select();
     return;
@@ -461,12 +461,12 @@ async function onScanCodeClick() {
   }
 
   if (!isSecureCameraContext()) {
-    showToast('Para usar camara abre el sitio por HTTPS. En iPhone y Android no funciona en HTTP.', true);
+    showToast('Para usar cámara abre el sitio por HTTPS. En iPhone y Android no funciona en HTTP.', true);
     return;
   }
 
   if (!isCameraApiSupported()) {
-    showToast('Este navegador no permite usar camara web. Ingresa el codigo manualmente.', true);
+    showToast('Este navegador no permite usar cámara web. Ingresa el código manualmente.', true);
     return;
   }
 
@@ -477,7 +477,7 @@ async function onScanCodeClick() {
       if (isHtml5QrcodeScannerSupported()) {
         await openHtml5QrcodeModal();
       } else {
-        showToast('No se pudo cargar el escaner movil. Revisa internet y recarga la pagina para usar camara.', true);
+        showToast('No se pudo cargar el escáner móvil. Revisa internet y recarga la página para usar cámara.', true);
       }
       return;
     }
@@ -525,21 +525,21 @@ function releaseStream(stream) {
 
 function handleCameraPermissionError(error) {
   if (error && (error.name === 'NotAllowedError' || error.name === 'SecurityError')) {
-    showToast('Permiso de camara denegado. iPhone: Safari > aA > Configuracion del sitio > Camara > Permitir. Android: permisos del navegador > Camara > Permitir.', true);
+    showToast('Permiso de cámara denegado. iPhone: Safari > aA > Configuración del sitio > Cámara > Permitir. Android: permisos del navegador > Cámara > Permitir.', true);
     return;
   }
 
   if (error && error.name === 'NotFoundError') {
-    showToast('No se detecto una camara disponible en este dispositivo.', true);
+    showToast('No se detectó una cámara disponible en este dispositivo.', true);
     return;
   }
 
   if (error && error.name === 'NotReadableError') {
-    showToast('La camara esta siendo usada por otra app. Cierrala e intenta nuevamente.', true);
+    showToast('La cámara está siendo usada por otra app. Ciérrala e intenta nuevamente.', true);
     return;
   }
 
-  showToast('No se pudo iniciar el escaner. Revisa permisos de camara e intenta nuevamente.', true);
+  showToast('No se pudo iniciar el escáner. Revisa permisos de cámara e intenta nuevamente.', true);
 }
 
 async function getScannerFormats() {
@@ -602,14 +602,14 @@ async function openScannerModal(initialStream = null) {
   document.body.classList.add('scanner-open');
   scannerState.active = true;
   setNativeScannerMode();
-  setScannerStatus('Iniciando camara...');
+  setScannerStatus('Iniciando cámara...');
 
   const stream = initialStream || (await requestCameraStream());
 
   scannerState.stream = stream;
   scannerState.video.srcObject = stream;
   await scannerState.video.play();
-  setScannerStatus('Apunta al codigo de barras o QR.');
+  setScannerStatus('Apunta al código de barras o QR.');
   requestNextScannerFrame();
 }
 
@@ -647,7 +647,7 @@ function processScannerFrame() {
       onScannerCodeDetected(firstMatch.rawValue);
     })
     .catch(() => {
-      // Ignorar errores intermitentes de deteccion para mantener el loop de escaneo.
+      // Ignorar errores intermitentes de detección para mantener el loop de escaneo.
     })
     .finally(() => {
       scannerState.detecting = false;
@@ -680,7 +680,7 @@ async function openHtml5QrcodeModal() {
   document.body.classList.add('scanner-open');
   scannerState.active = true;
   setFallbackScannerMode();
-  setScannerStatus('Iniciando camara...');
+  setScannerStatus('Iniciando cámara...');
 
   const readerHostId = `scanner-fallback-${Date.now()}`;
   scannerState.fallbackHost.innerHTML = `<div id="${readerHostId}" class="scanner-fallback-reader"></div>`;
@@ -712,7 +712,7 @@ async function openHtml5QrcodeModal() {
     }
   );
 
-  setScannerStatus('Apunta al codigo de barras o QR.');
+  setScannerStatus('Apunta al código de barras o QR.');
 }
 
 function onScannerCodeDetected(rawCodeValue) {
@@ -729,7 +729,7 @@ function onScannerCodeDetected(rawCodeValue) {
   saleCodeInput.focus();
   saleCodeInput.select();
   stopScannerSession();
-  showToast(`Codigo escaneado: ${scannedValue}`);
+  showToast(`Código escaneado: ${scannedValue}`);
 }
 
 function setNativeScannerMode() {
@@ -761,18 +761,18 @@ function createScannerModal() {
   const modal = document.createElement('div');
   modal.className = 'scanner-modal';
   modal.innerHTML = `
-    <div class="scanner-dialog" role="dialog" aria-modal="true" aria-label="Escanear codigo">
+    <div class="scanner-dialog" role="dialog" aria-modal="true" aria-label="Escanear código">
       <div class="scanner-header">
-        <h3>Escanear codigo</h3>
+        <h3>Escanear código</h3>
         <button type="button" class="btn btn-soft scanner-close-btn">Cerrar</button>
       </div>
-      <p class="scanner-status">Preparando camara...</p>
+      <p class="scanner-status">Preparando cámara...</p>
       <div class="scanner-video-wrap">
         <video class="scanner-video" autoplay playsinline muted></video>
         <div class="scanner-guide" aria-hidden="true"></div>
         <div class="scanner-fallback-host hidden"></div>
       </div>
-      <p class="scanner-hint">Apunta al codigo de barras o QR de la planta.</p>
+      <p class="scanner-hint">Apunta al código de barras o QR de la planta.</p>
       <div class="scanner-footer">
         <button type="button" class="btn btn-soft scanner-cancel-btn">Cancelar</button>
       </div>
@@ -804,7 +804,7 @@ function stopScannerSession() {
     html5Qrcode
       .stop()
       .catch(() => {
-        // Ignorar: puede ocurrir si el escaneo aun no parte completamente.
+        // Ignorar: puede ocurrir si el escaneo aún no parte completamente.
       })
       .finally(() => {
         if (typeof html5Qrcode.clear === 'function') {
@@ -1070,7 +1070,7 @@ async function showSaleDetail(saleId) {
     saleDetailContent.innerHTML = `
       <p><strong>Cliente:</strong> ${escapeHtml(sale.customer_name || 'Mostrador')}</p>
       <p><strong>Email:</strong> ${escapeHtml(sale.customer_email || '-')}</p>
-      <p><strong>Telefono:</strong> ${escapeHtml(sale.customer_phone || '-')}</p>
+      <p><strong>Teléfono:</strong> ${escapeHtml(sale.customer_phone || '-')}</p>
       <p><strong>Total:</strong> ${formatMoney(sale.total || 0)}</p>
       <p><strong>Fecha:</strong> ${formatDate(sale.created_at)}</p>
       <h4>Plantas vendidas y links de cuidado</h4>
@@ -1190,3 +1190,4 @@ function showToast(message, isError = false) {
     toast.classList.add('hidden');
   }, 3200);
 }
+
