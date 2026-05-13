@@ -257,9 +257,36 @@ function showPlantCare(plantId) {
     )
     .join('');
 
+  const quickCards = [
+    ['Luz ideal', plant.light_type || 'No especificado', 'Luz'],
+    ['Frecuencia de riego', plant.watering || 'No especificado', 'Riego'],
+    ['Dónde ubicarla', plant.location || 'No especificado', 'Espacio'],
+  ]
+    .map(
+      ([title, value, tag]) => `
+        <article class="care-quick-card">
+          <p class="care-quick-tag">${escapeHtml(tag)}</p>
+          <h4>${escapeHtml(title)}</h4>
+          <p>${escapeHtml(value)}</p>
+        </article>
+      `
+    )
+    .join('');
+
   careContent.innerHTML = `
-    <div class="care-content">
-      <img class="plant-photo" src="${escapeHtml(plant.image_url || DEFAULT_IMAGE_URL)}" alt="${escapeHtml(plant.name || 'Planta')}" />
+    <div class="care-showcase">
+      <article class="care-media-card">
+        <div class="care-main-photo-wrap">
+          <img class="care-main-photo" src="${escapeHtml(plant.image_url || DEFAULT_IMAGE_URL)}" alt="${escapeHtml(plant.name || 'Planta')}" />
+        </div>
+        <div class="care-media-meta">
+          <p class="care-plant-code">${escapeHtml(plant.code || 'SIN-CODIGO')}</p>
+          <p class="care-plant-price">${formatMoney(plant.price || 0)}</p>
+        </div>
+      </article>
+
+      <div class="care-quick-strip">${quickCards}</div>
+
       <div class="care-grid">${detailHtml}</div>
     </div>
   `;
